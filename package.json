@@ -7,7 +7,7 @@
     "test": "jest --no-cache",
     "lint": "eslint --init",
     "build": "rollup -c",
-    "build-dev": "cross-env NODE_ENV=development rollup -c",
+    "build-dev": "cross-env NODE_ENV=development rollup -c -w",
     "build-prod": "cross-env NODE_ENV=production rollup -c"
   },
   "author": "",
@@ -30,6 +30,7 @@
     "jest": "^24.9.0",
     "prettier": "1.19.1",
     "pretty-quick": "^2.0.1",
+    "rollup": "^1.27.9",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-eslint": "^7.0.0",

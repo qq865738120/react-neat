@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-alert("ok");
+
 ReactDOM.render(
   <div>
     <h1>Hello, Welcome to the first page</h1>
