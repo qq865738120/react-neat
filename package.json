@@ -1,21 +1,21 @@
 {
   "name": "react-neat",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.2",
+  "description": "A react tool library",
+  "repository": ":username/:repository",
+  "main": "dist/index.js",
+  "keywords": ["react", "react-neat"],
+  "files":[
+    "dist"
+  ],
   "scripts": {
     "test": "jest --no-cache",
-    "lint": "eslint --init",
-    "build": "rollup -c",
-    "build-dev": "cross-env NODE_ENV=development rollup -c -w",
-    "build-prod": "cross-env NODE_ENV=production rollup -c"
+    "build": "cross-env NODE_ENV=production rollup -c",
+    "start": "cross-env NODE_ENV=development rollup -c -w"
   },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0"
-  },
+  "author": "code_xia",
+  "license": "MIT",
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^24.0.23",
     "@types/node": "^12.12.14",
@@ -30,6 +30,8 @@
     "jest": "^24.9.0",
     "prettier": "1.19.1",
     "pretty-quick": "^2.0.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
     "rollup": "^1.27.9",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",

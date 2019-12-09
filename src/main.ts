@@ -1,8 +1,5 @@
-import foo from "./foo.ts";
+import foo from "./foo";
 
-export default class Main {
-  testFun() {
-    console.log(foo);
-    return "is ok";
-  }
-}
+const hello = foo;
+
+export default hello;
