@@ -1,4 +1,4 @@
-import foo from "./foo";
+import foo from "./upState";
 
 const hello = foo;
 

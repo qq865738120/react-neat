@@ -1,10 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import App from "./dev/components/App";
 
-ReactDOM.render(
-  <div>
-    <h1>Hello, Welcome to the first page</h1>
-    <p>ok1</p>
-  </div>,
-  document.getElementById("app")
-);
+ReactDOM.render(<App></App>, document.getElementById("root"));

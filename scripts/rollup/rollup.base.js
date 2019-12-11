@@ -25,12 +25,15 @@ export default {
       }
     }),
     commonJs({
-      include: "node_modules/**"
+      include: "node_modules/**",
+      namedExports: {
+        react: ["createElement", "Component", "useState", "useEffect"]
+      }
     }),
     eslint({
       throwOnError: true,
       throwOnWarning: true,
-      include: ["src/**", "static/**"],
+      include: ["src/**"],
       exclude: ["node_modules/**", "dist/**"]
     }),
     json(),
