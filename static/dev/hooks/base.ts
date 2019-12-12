@@ -43,6 +43,7 @@ export function useCount(deff?) {
 export function useHead() {
   // const [count, add, less] = useCount();
   // const [isShow, setShow, setHide] = useModal(false, count);
+  console.log("useCount", useCount);
 
   return [].concat(useCount(), useModal(false, 1));
 }

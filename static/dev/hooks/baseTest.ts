@@ -40,7 +40,7 @@ export function useCount(deff?) {
 
 export function useHead() {
   const [count, add, less] = upState(useCount());
-  const [isShow, setShow, setHide] = withHook(useModal(false), () => {})();
+  const [isShow, setShow, setHide] = withHook(useModal, () => {})();
 
   return [count, add, less, isShow, setShow, setHide];
 }
