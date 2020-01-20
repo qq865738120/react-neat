@@ -2726,6 +2726,9 @@
   var react_2 = react.Component;
   var react_3 = react.useState;
   var react_4 = react.useEffect;
+  var react_5 = react.useReducer;
+  var react_6 = react.useContext;
+  var react_7 = react.createContext;
 
   var scheduler_production_min = createCommonjsModule(function(
     module,
@@ -42314,14 +42317,92 @@
     }
   });
 
-  function useModal(deff, count) {
-    const [isShow, setIsShow] = react_3(deff || false);
+  function max(arr) {
+    return arr.reduce((accu, curr) => {
+      if (curr > accu) return curr;
+      return accu;
+    });
+  }
+  function getDepth(arr) {
+    const eleDepths = [];
+    arr.forEach(ele => {
+      let depth = 0;
+      if (Array.isArray(ele)) {
+        depth = getDepth(ele);
+      }
+      eleDepths.push(depth);
+    });
+    return 1 + max(eleDepths);
+  }
+  //# sourceMappingURL=baseUtil.js.map
+
+  const __createState = states => {
+    /* eslint-disable react-hooks/rules-of-hooks */
+    const stateArr = [];
+    (states || []).map(item => stateArr.push(...react_3(item)));
+    return stateArr;
+  };
+  const __createReducer = option => {
+    return react_5(option.reducer, option.initialState, option.initialAction);
+  };
+  const __useHooks = (context, hooks, args) => {
+    if (!hooks) {
+      return context;
+    }
+    const result = [];
+    (hooks || []).map((item, index) => {
+      const funReturn = item.apply(
+        context,
+        (args &&
+          (getDepth(args) === 1 ? args : args[index] || []).concat([
+            context
+          ])) || [context]
+      );
+      if (Array.isArray(funReturn)) {
+        result.push(...funReturn);
+      } else {
+        result.push(funReturn);
+      }
+    });
+    return result;
+  };
+  /**
+   * Merge hooks add some shared state when needed.
+   * 1.Please keep the state order unchanged at every renderer
+   * 2.You can get the shared status through the last parameter
+   * of the function. If it is not an arrow function, you can get
+   * it through this reference
+   *
+   * @export
+   * @param {(Array<(...rest) => [] | {}>)} hooks
+   * @param {any[]} [state]
+   * @param {(any[] | any[][])} [args]
+   * @returns {any[]}
+   */
+  function useBox(hooks, states, args) {
+    let context = [];
+    if (states.length) {
+      context = [...__createState(states)];
+    } else {
+      context = [...__createReducer(states)];
+    }
+    return __useHooks(context, hooks, args);
+  }
+  //# sourceMappingURL=useBox.js.map
+
+  function useText(callback) {
+    const text = react_3("text");
+    console.log("text", text);
+  }
+  function useModal(callback) {
+    const [isShow, setIsShow] = react_3(false);
+    const [point, setPoint, test, setTest] = this;
+    console.log("callback", callback);
+    console.log("point", point);
+    console.log("test", test);
     react_4(() => {
       console.log("switch to", isShow);
     }, [isShow]);
-    react_4(() => {
-      console.log("switch to show count", count);
-    }, [count]);
     const setShow = () => {
       setIsShow(true);
     };
@@ -42330,13 +42411,17 @@
     };
     return [isShow, setShow, setHide];
   }
-  function useCount(deff) {
-    const [count, setCount] = react_3(deff || 0);
+  function useCount(callback) {
+    const [count, setCount] = react_3(0);
+    const [point, setPoint, test, setTest] = this;
+    // const [point, setPoint] = callback();
     react_4(() => {
       console.log("count change", count);
     }, [count]);
     const add = () => {
       setCount(count + 1);
+      setPoint(count);
+      setTest("test" + count);
     };
     const less = () => {
       setCount(count - 1);
@@ -42346,9 +42431,11 @@
   function useHead() {
     // const [count, add, less] = useCount();
     // const [isShow, setShow, setHide] = useModal(false, count);
-    console.log("useCount", useCount);
-    return [].concat(useCount(), useModal(false, 1));
+    useText();
+    const arr = useBox([useCount, useModal], [3, { test: "111" }], [[1], [2]]);
+    return arr;
   }
+  //# sourceMappingURL=base.js.map
 
   function Head() {
     const [count, add, less, isShow, setShow, setHide] = useHead();
@@ -42374,25 +42461,50 @@
   //# sourceMappingURL=Head.js.map
 
   function Body() {
-    const [isShow, setShow, setHide] = useModal(true);
+    const [state, dispatch] = react_6(Context);
+    console.log("state", state);
     return react.createElement(
       "div",
       null,
-      react.createElement("p", null, "Body"),
-      react.createElement("p", null, isShow ? "show" : "hide")
+      react.createElement("p", null, "Body ", state.count),
+      react.createElement(
+        "button",
+        { onClick: dispatch.bind(this, { type: "increment" }) },
+        "increment"
+      ),
+      react.createElement(
+        "button",
+        { onClick: dispatch.bind(this, { type: "decrement" }) },
+        "decrement"
+      )
     );
   }
   //# sourceMappingURL=Body.js.map
 
+  const Context = react_7(null);
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "increment":
+        return { count: state.count + 1 };
+      case "decrement":
+        return { count: state.count - 1 };
+      default:
+        return state;
+    }
+  };
   function App() {
+    const value = react_5(reducer, { count: 1 });
     return react.createElement(
-      "div",
-      { className: "App" },
-      react.createElement(Head, null),
-      react.createElement(Body, null)
+      Context.Provider,
+      { value: value },
+      react.createElement(
+        "div",
+        { className: "App" },
+        react.createElement(Head, null),
+        react.createElement(Body, null)
+      )
     );
   }
-  //# sourceMappingURL=App.js.map
 
   reactDom.render(
     react.createElement(App, null),

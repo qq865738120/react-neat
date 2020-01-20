@@ -1,13 +1,19 @@
-import React from "react";
-import { useModal } from "../hooks/base";
+import React, { useContext } from "react";
+import { Context } from "./App";
 
 export default function Body() {
-  const [isShow, setShow, setHide] = useModal(true);
+  const [state, dispatch] = useContext(Context);
+  console.log("state", state);
 
   return (
     <div>
-      <p>Body</p>
-      <p>{isShow ? "show" : "hide"}</p>
+      <p>Body {state.count}</p>
+      <button onClick={dispatch.bind(this, { type: "increment" })}>
+        increment
+      </button>
+      <button onClick={dispatch.bind(this, { type: "decrement" })}>
+        decrement
+      </button>
     </div>
   );
 }

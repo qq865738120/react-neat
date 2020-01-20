@@ -27,7 +27,15 @@ export default {
     commonJs({
       include: "node_modules/**",
       namedExports: {
-        react: ["createElement", "Component", "useState", "useEffect"]
+        react: [
+          "createElement",
+          "Component",
+          "useState",
+          "useEffect",
+          "useReducer",
+          "useContext",
+          "createContext"
+        ]
       }
     }),
     eslint({
