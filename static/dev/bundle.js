@@ -42334,7 +42334,6 @@
     });
     return 1 + max(eleDepths);
   }
-  //# sourceMappingURL=baseUtil.js.map
 
   const __createState = states => {
     /* eslint-disable react-hooks/rules-of-hooks */
@@ -42388,7 +42387,6 @@
     }
     return __useHooks(context, hooks, args);
   }
-  //# sourceMappingURL=useBox.js.map
 
   function useText(callback) {
     const text = react_3("text");
@@ -42435,7 +42433,6 @@
     const arr = useBox([useCount, useModal], [3, { test: "111" }], [[1], [2]]);
     return arr;
   }
-  //# sourceMappingURL=base.js.map
 
   function Head() {
     const [count, add, less, isShow, setShow, setHide] = useHead();
@@ -42458,10 +42455,128 @@
       react.createElement("button", { onClick: setHide }, "hide")
     );
   }
-  //# sourceMappingURL=Head.js.map
+
+  /**
+   * store empty class
+   *
+   * @class Store
+   */
+  class Store {
+    constructor(name, reducer, context) {
+      this.name = name;
+      this.reducer = reducer;
+      this.context = context;
+    }
+    getName() {
+      return this.name;
+    }
+    setName(name) {
+      this.name = name;
+      return true;
+    }
+    getReducer() {
+      return this.reducer;
+    }
+    setReducer(reducer) {
+      this.reducer = reducer;
+      return true;
+    }
+    getContext() {
+      return this.context;
+    }
+    setContext(context) {
+      this.context = context;
+      return true;
+    }
+  }
+
+  function ParamsException(message) {
+    this.message = message;
+    this.name = "params error";
+    this.code = 1000;
+  }
+
+  const storeList = [];
+  /**
+   * Get the specified store.
+   * If the store does not exist, it will be created.
+   *
+   * @param storeName store name
+   * @param reducer If the store has never been obtained, please pass in the reducer parameter.
+   */
+  const getStore = (storeName, reducer) => {
+    let storeObj = storeList.filter(item => item.getName() === storeName).pop();
+    if (storeObj) {
+      return storeObj;
+    }
+    if (!reducer) {
+      throw new ParamsException(
+        "If the store has never been obtained, please pass in the reducer parameter."
+      );
+    }
+    const context = react_7(null);
+    storeObj = new Store(storeName, reducer, context);
+    storeList.push(storeObj);
+    return storeObj;
+  };
+  /**
+   * Use the store hook
+   *
+   * @param store The store instance you want to use
+   * @param initialState Initial state
+   * @param initializer Lazy loading state initial value
+   */
+  function useStore(store, initialState, initializer) {
+    const value = react_5(store.getReducer(), initialState, initializer);
+    return value;
+  }
+  /**
+   * Store Provider component
+   * This component will distribute the state in the store to its children
+   *
+   * @param props component props
+   */
+  function Providers(props) {
+    const { stores, values, children } = props;
+    const childrenArr = Array.isArray(children) ? children : [children];
+    if (stores.length !== values.length) {
+      throw new ParamsException(
+        "Stores and values must correspond one by one."
+      );
+    }
+    const queue = [];
+    stores.map((item, index) => {
+      if (index === 0) {
+        queue.push(
+          react_1(
+            item.getContext().Provider,
+            { value: values[index] },
+            ...childrenArr
+          )
+        );
+      } else {
+        queue.push(
+          react_1(
+            item.getContext().Provider,
+            { value: values[index] },
+            queue.pop()
+          )
+        );
+      }
+    });
+    return queue.pop();
+  }
+  /**
+   * Use context to get the state provided in the store
+   *
+   * @param store Pass in the store whose context you want to use
+   */
+  function useStoreContext(store) {
+    return react_6(store.getContext());
+  }
 
   function Body() {
-    const [state, dispatch] = react_6(Context);
+    const [state, dispatch] = useStoreContext(getStore("test"));
     console.log("state", state);
     return react.createElement(
       "div",
@@ -42479,9 +42594,7 @@
       )
     );
   }
-  //# sourceMappingURL=Body.js.map
 
-  const Context = react_7(null);
   const reducer = (state, action) => {
     switch (action.type) {
       case "increment":
@@ -42493,16 +42606,18 @@
     }
   };
   function App() {
-    const value = react_5(reducer, { count: 1 });
+    const store = getStore("test", reducer);
+    const value = useStore(store, { count: 1 });
     return react.createElement(
-      Context.Provider,
-      { value: value },
+      Providers,
+      { stores: [store], values: [value] },
       react.createElement(
         "div",
         { className: "App" },
         react.createElement(Head, null),
         react.createElement(Body, null)
-      )
+      ),
+      react.createElement("p", null, "1")
     );
   }
 
@@ -42510,6 +42625,5 @@
     react.createElement(App, null),
     document.getElementById("root")
   );
-  //# sourceMappingURL=Index.js.map
 })();
 //# sourceMappingURL=bundle.js.map

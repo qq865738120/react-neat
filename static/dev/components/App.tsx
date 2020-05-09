@@ -1,8 +1,7 @@
 import React, { createContext, useReducer } from "react";
 import Head from "./Head";
 import Body from "./Body";
-
-export const Context = createContext(null);
+import useStore, { getStore, Provider, Providers } from "../../../src/useStore";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -16,15 +15,17 @@ const reducer = (state, action) => {
 };
 
 function App() {
-  const value = useReducer(reducer, { count: 1 });
+  const store = getStore("test", reducer);
+  const value = useStore(store, { count: 1 });
 
   return (
-    <Context.Provider value={value}>
+    <Providers stores={[store]} values={[value]}>
       <div className="App">
         <Head></Head>
         <Body></Body>
       </div>
-    </Context.Provider>
+      <p>1</p>
+    </Providers>
   );
 }
 

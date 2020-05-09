@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { Context } from "./App";
+import { getStore, useStoreContext } from "../../../src/useStore";
 
 export default function Body() {
-  const [state, dispatch] = useContext(Context);
+  const [state, dispatch] = useStoreContext(getStore("test"));
   console.log("state", state);
 
   return (
