@@ -16,3 +16,7 @@ export function getDepth(arr: any[]): number {
   });
   return 1 + max(eleDepths);
 }
+
+export function isPromise(value): boolean {
+  return value && Object.prototype.toString.call(value) === "[object Promise]";
+}

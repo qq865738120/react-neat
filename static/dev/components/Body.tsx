@@ -2,18 +2,17 @@ import React, { useContext } from "react";
 import { getStore, useStoreContext } from "../../../src/useStore";
 
 export default function Body() {
-  const [state, dispatch] = useStoreContext(getStore("test"));
-  console.log("state", state);
+  const { state, actions } = useStoreContext(getStore("test"));
+  console.log("state", state, actions);
 
   return (
     <div>
-      <p>Body {state.count}</p>
-      <button onClick={dispatch.bind(this, { type: "increment" })}>
-        increment
-      </button>
-      <button onClick={dispatch.bind(this, { type: "decrement" })}>
-        decrement
-      </button>
+      <h2>Body</h2>
+      <p>
+        count: {state.count}, name: {state.name}
+      </p>
+      <button onClick={() => actions.increment()}>increment</button>
+      <button onClick={() => actions.decrement()}>decrement</button>
     </div>
   );
 }

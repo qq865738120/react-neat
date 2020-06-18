@@ -1,8 +1,9 @@
-import { createContext, useReducer, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import * as React from "react";
 import Store from "./store";
-import { Reducer } from "./type";
+// import { Reducer } from "./type";
 import { ParamsException } from "./utils/exceptions";
+import { isPromise } from "./utils/baseUtil";
 
 const storeList: Store[] = [];
 
@@ -30,9 +31,9 @@ export const hasStore = (storeName: string): boolean => {
  * If the store does not exist, it will be created.
  *
  * @param storeName store name
- * @param reducer If the store has never been obtained, please pass in the reducer parameter.
+ * @param actions If the store has never been obtained, please pass in the reducer parameter.
  */
-export const getStore = (storeName: string, reducer?: Reducer): Store => {
+export const getStore = (storeName: string, actions?: {}): Store => {
   let storeObj: Store = storeList
     .filter(item => item.getName() === storeName)
     .pop();
@@ -41,18 +42,22 @@ export const getStore = (storeName: string, reducer?: Reducer): Store => {
     return storeObj;
   }
 
-  if (!reducer) {
+  if (!actions) {
     throw new ParamsException(
       "If the store has never been obtained, please pass in the reducer parameter."
     );
   }
 
   const context = createContext(null);
-  storeObj = new Store(storeName, reducer, context);
+  storeObj = new Store(storeName, actions, context);
   storeList.push(storeObj);
   return storeObj;
 };
 
+interface StoreReducer {
+  state: any;
+  actions: object;
+}
 /**
  * Use the store hook
  *
@@ -60,13 +65,25 @@ export const getStore = (storeName: string, reducer?: Reducer): Store => {
  * @param initialState Initial state
  * @param initializer Lazy loading state initial value
  */
-export default function useStore(
-  store: Store,
-  initialState,
-  initializer?
-): [any, React.Dispatch<any>] {
-  const value = useReducer(store.getReducer(), initialState, initializer);
-  return value;
+export default function useStore(store: Store, initialState): StoreReducer {
+  // const value = useReducer(store.getActions(), initialState, initializer);
+  // return value;
+  const actions = {};
+  console.log("store.getReducer()", store.getActions());
+  const [state, setState] = useState(initialState);
+  Object.keys(store.getActions()).forEach(name => {
+    actions[name] = (arg): any => {
+      const res = store.getActions()[name].call(this, state, arg);
+      if (isPromise(res)) {
+        Promise.resolve(res).then(ret => {
+          setState({ ...state, ...ret });
+        });
+      } else {
+        setState({ ...state, ...res });
+      }
+    };
+  });
+  return { state, actions };
 }
 
 interface ProviderProps {
