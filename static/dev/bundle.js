@@ -42381,7 +42381,6 @@
       value && Object.prototype.toString.call(value) === "[object Promise]"
     );
   }
-  //# sourceMappingURL=baseUtil.js.map
 
   const __createState = states => {
     /* eslint-disable react-hooks/rules-of-hooks */
@@ -42435,7 +42434,6 @@
     }
     return __useHooks(context, hooks, args);
   }
-  //# sourceMappingURL=useBox.js.map
 
   function useText(callback) {
     const text = react_3("text");
@@ -42482,7 +42480,6 @@
     const arr = useBox([useCount, useModal], [3, { test: "111" }], [[1], [2]]);
     return arr;
   }
-  //# sourceMappingURL=base.js.map
 
   function Head() {
     const [count, add, less, isShow, setShow, setHide] = useHead();
@@ -42505,7 +42502,6 @@
       react.createElement("button", { onClick: setHide }, "hide")
     );
   }
-  //# sourceMappingURL=Head.js.map
 
   /**
    * store empty class
@@ -42540,14 +42536,12 @@
       return true;
     }
   }
-  //# sourceMappingURL=store.js.map
 
   function ParamsException(message) {
     this.message = message;
     this.name = "params error";
     this.code = 1000;
   }
-  //# sourceMappingURL=exceptions.js.map
 
   const storeList = [];
   /**
@@ -42643,7 +42637,6 @@
   function useStoreContext(store) {
     return react_6(store.getContext());
   }
-  //# sourceMappingURL=useStore.js.map
 
   function Body() {
     const { state, actions } = useStoreContext(getStore("test"));
@@ -42672,7 +42665,6 @@
       )
     );
   }
-  //# sourceMappingURL=Body.js.map
 
   const sleep = t =>
     __awaiter(void 0, void 0, void 0, function*() {
@@ -42690,12 +42682,13 @@
     }
   };
   function App() {
-    const store = getStore("test", actions);
-    const value = useStore(store, { count: 1, name: "my name" });
-    console.log("value", value);
+    const testStore = getStore("test", actions);
+    const testValue = useStore(testStore, { count: 1, name: "my name" });
+    const userStore = getStore("user", actions);
+    const userValue = useStore(userStore, { nickName: "xiao ming", age: 22 });
     return react.createElement(
       Providers,
-      { stores: [store], values: [value] },
+      { stores: [testStore, userStore], values: [testValue, userValue] },
       react.createElement(
         "div",
         { className: "App" },
@@ -42710,6 +42703,5 @@
     react.createElement(App, null),
     document.getElementById("root")
   );
-  //# sourceMappingURL=Index.js.map
 })();
 //# sourceMappingURL=bundle.js.map

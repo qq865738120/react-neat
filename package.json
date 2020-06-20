@@ -1,12 +1,14 @@
 {
   "name": "react-neat",
-  "version": "1.0.2",
-  "description": "A react tool library",
+  "version": "1.0.5",
+  "description": "A react hook tool library",
   "repository": ":username/:repository",
   "main": "dist/index.js",
   "keywords": [
     "react",
-    "react-neat"
+    "react-neat",
+    "redux",
+    "mobx"
   ],
   "files": [
     "dist"

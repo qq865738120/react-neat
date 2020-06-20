@@ -1,7 +1,7 @@
 import React, { createContext, useReducer } from "react";
 import Head from "./Head";
 import Body from "./Body";
-import useStore, { getStore, Provider, Providers } from "../../../src/useStore";
+import { useStore, getStore, Provider, Providers } from "../../../src/index";
 
 const sleep = async t => new Promise(resolve => setTimeout(resolve, t));
 
@@ -16,12 +16,13 @@ const actions = {
 };
 
 function App() {
-  const store = getStore("test", actions);
-  const value = useStore(store, { count: 1, name: "my name" });
-  console.log("value", value);
+  const testStore = getStore("test", actions);
+  const testValue = useStore(testStore, { count: 1, name: "my name" });
+  const userStore = getStore("user", actions);
+  const userValue = useStore(userStore, { nickName: "xiao ming", age: 22 });
 
   return (
-    <Providers stores={[store]} values={[value]}>
+    <Providers stores={[testStore, userStore]} values={[testValue, userValue]}>
       <div className="App">
         <Head></Head>
         <Body></Body>
