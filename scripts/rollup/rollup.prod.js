@@ -35,7 +35,14 @@ export default {
     {
       banner,
       format: "es",
-      file: "dist/index.js",
+      file: "dist/es/index.js",
+      sourcemap: true
+    },
+    {
+      banner,
+      format: "umd",
+      file: "dist/umd/index.js",
+      name: "ReactNeat",
       sourcemap: true
     }
   ],

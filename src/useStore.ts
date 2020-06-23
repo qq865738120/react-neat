@@ -33,7 +33,18 @@ export const hasStore = (storeName: string): boolean => {
  * @param storeName store name
  * @param actions If the store has never been obtained, please pass in the reducer parameter.
  */
-export const getStore = (storeName: string, actions?: {}): Store => {
+
+/**
+ * Get the specified store.
+ * If the store does not exist, it will be created.
+ *
+ * @export
+ * @template T - The action type you defined.
+ * @param {string} storeName - The store name, you can find the corresponding store through `storeName`
+ * @param {T} [actions] - The action object can provide multiple actions, and each action corresponds to an operation.
+ * @returns {Store} - The Store object
+ */
+export function getStore<T>(storeName: string, actions?: T): Store {
   let storeObj: Store = storeList
     .filter(item => item.getName() === storeName)
     .pop();
@@ -52,23 +63,37 @@ export const getStore = (storeName: string, actions?: {}): Store => {
   storeObj = new Store(storeName, actions, context);
   storeList.push(storeObj);
   return storeObj;
-};
-
-interface StoreReducer {
-  state: any;
-  actions: object;
 }
+
 /**
- * Use the store hook
+ * The store reducer interface.
  *
- * @param store The store instance you want to use
- * @param initialState Initial state
- * @param initializer Lazy loading state initial value
+ * @interface StoreReducer
+ * @template T - The action type you defined.
+ * @template U - The state type you defined.
  */
-export default function useStore(store: Store, initialState): StoreReducer {
+export interface StoreReducer<T, U> {
+  state: U;
+  actions: T;
+}
+
+/**
+ * Use the store hook.
+ *
+ * @export
+ * @template T
+ * @template U
+ * @param {Store} store - The store instance you want to use.
+ * @param {*} initialState - Initial state.
+ * @returns {StoreReducer<T, U>} - `StoreReducer` is an interface that provides `state` and `actions` to operate `state`.
+ */
+export default function useStore<T, U>(
+  store: Store,
+  initialState
+): StoreReducer<T, U> {
   // const value = useReducer(store.getActions(), initialState, initializer);
   // return value;
-  const actions = {};
+  const actions = {} as T;
   console.log("store.getReducer()", store.getActions());
   const [state, setState] = useState(initialState);
   Object.keys(store.getActions()).forEach(name => {
@@ -86,20 +111,26 @@ export default function useStore(store: Store, initialState): StoreReducer {
   return { state, actions };
 }
 
-interface ProviderProps {
+interface ProviderProps<T, U> {
   store: Store;
-  value: any;
+  value: StoreReducer<T, U>;
   children: React.ReactNode[] | React.ReactNode;
 }
+
 /**
- * Store Provider component
- * This component will distribute the state in the store to its children
+ * Store Provider component.
+ * This component will distribute the state in the store to its children.
+ * If you need to use multiple stores at the same time, you should use `Providers`.
  *
- * @param props component props
+ * @export
+ * @template T - The action type you defined.
+ * @template U - The state type you defined.
+ * @param {ProviderProps<T, U>} props - React component props.
+ * @returns {React.FunctionComponentElement<React.ProviderProps<ProvidersProps<T, U>>>}
  */
-export function Provider(
-  props: ProviderProps
-): React.FunctionComponentElement<React.ProviderProps<any>> {
+export function Provider<T, U>(
+  props: ProviderProps<T, U>
+): React.FunctionComponentElement<React.ProviderProps<ProvidersProps<T, U>>> {
   const { store, value, children } = props;
   const childrenArr = Array.isArray(children) ? children : [children];
   return React.createElement(
@@ -109,20 +140,25 @@ export function Provider(
   );
 }
 
-interface ProvidersProps {
+interface ProvidersProps<T, U> {
   stores: Store[];
-  values: any[];
+  values: StoreReducer<T, U>[];
   children: React.ReactNode[] | React.ReactNode;
 }
+
 /**
- * Store Provider component
- * This component will distribute the state in the store to its children
+ * Store Provider component.
+ * This component will distribute the state in the store to its children.
  *
- * @param props component props
+ * @export
+ * @template T - The action type you defined.
+ * @template U - The state type you defined.
+ * @param {ProvidersProps<T, U>} props - React component props.
+ * @returns {React.FunctionComponentElement<React.ProviderProps<ProvidersProps<T, U>>>}
  */
-export function Providers(
-  props: ProvidersProps
-): React.FunctionComponentElement<React.ProviderProps<any>> {
+export function Providers<T, U>(
+  props: ProvidersProps<T, U>
+): React.FunctionComponentElement<React.ProviderProps<ProvidersProps<T, U>>> {
   const { stores, values, children } = props;
   const childrenArr = Array.isArray(children) ? children : [children];
   if (stores.length !== values.length) {
@@ -154,10 +190,16 @@ export function Providers(
 }
 
 /**
- * Use context to get the state provided in the store
+ * Use context to get the state provided in the store.
+ * `useContext` is the encapsulation method of `useStoreContext`.
+ * The provider must be injected into the global component before use.
  *
- * @param store Pass in the store whose context you want to use
+ * @export
+ * @template T - The action type you defined.
+ * @template U - The state type you defined.
+ * @param {Store} store - Pass in the store whose context you want to use
+ * @returns {StoreReducer<T, U>} - `StoreReducer` is an interface that provides `state` and `actions` to operate `state`.
  */
-export function useStoreContext(store: Store): any {
+export function useStoreContext<T, U>(store: Store): StoreReducer<T, U> {
   return useContext(store.getContext());
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { getStore, useStoreContext } from "../../../src/useStore";
 
 export default function Body() {
-  const { state, actions } = useStoreContext(getStore("test"));
+  const { state, actions } = useStoreContext<any, any>(getStore("test"));
   console.log("state", state, actions);
 
   return (
