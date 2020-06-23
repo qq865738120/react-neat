@@ -42317,6 +42317,48 @@
     }
   });
 
+  /*! *****************************************************************************
+	Copyright (c) Microsoft Corporation. All rights reserved.
+	Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+	this file except in compliance with the License. You may obtain a copy of the
+	License at http://www.apache.org/licenses/LICENSE-2.0
+
+	THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+	KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+	WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+	MERCHANTABLITY OR NON-INFRINGEMENT.
+
+	See the Apache Version 2.0 License for specific language governing permissions
+	and limitations under the License.
+	***************************************************************************** */
+
+  function __awaiter(thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function(resolve, reject) {
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done
+          ? resolve(result.value)
+          : new P(function(resolve) {
+              resolve(result.value);
+            }).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+  }
+
   function max(arr) {
     return arr.reduce((accu, curr) => {
       if (curr > accu) return curr;
@@ -42333,6 +42375,11 @@
       eleDepths.push(depth);
     });
     return 1 + max(eleDepths);
+  }
+  function isPromise(value) {
+    return (
+      value && Object.prototype.toString.call(value) === "[object Promise]"
+    );
   }
 
   const __createState = states => {
@@ -42462,9 +42509,9 @@
    * @class Store
    */
   class Store {
-    constructor(name, reducer, context) {
+    constructor(name, actions, context) {
       this.name = name;
-      this.reducer = reducer;
+      this.actions = actions;
       this.context = context;
     }
     getName() {
@@ -42474,11 +42521,11 @@
       this.name = name;
       return true;
     }
-    getReducer() {
-      return this.reducer;
+    getActions() {
+      return this.actions;
     }
-    setReducer(reducer) {
-      this.reducer = reducer;
+    setActions(actions) {
+      this.actions = actions;
       return true;
     }
     getContext() {
@@ -42502,20 +42549,20 @@
    * If the store does not exist, it will be created.
    *
    * @param storeName store name
-   * @param reducer If the store has never been obtained, please pass in the reducer parameter.
+   * @param actions If the store has never been obtained, please pass in the reducer parameter.
    */
-  const getStore = (storeName, reducer) => {
+  const getStore = (storeName, actions) => {
     let storeObj = storeList.filter(item => item.getName() === storeName).pop();
     if (storeObj) {
       return storeObj;
     }
-    if (!reducer) {
+    if (!actions) {
       throw new ParamsException(
         "If the store has never been obtained, please pass in the reducer parameter."
       );
     }
     const context = react_7(null);
-    storeObj = new Store(storeName, reducer, context);
+    storeObj = new Store(storeName, actions, context);
     storeList.push(storeObj);
     return storeObj;
   };
@@ -42526,9 +42573,25 @@
    * @param initialState Initial state
    * @param initializer Lazy loading state initial value
    */
-  function useStore(store, initialState, initializer) {
-    const value = react_5(store.getReducer(), initialState, initializer);
-    return value;
+  function useStore(store, initialState) {
+    // const value = useReducer(store.getActions(), initialState, initializer);
+    // return value;
+    const actions = {};
+    console.log("store.getReducer()", store.getActions());
+    const [state, setState] = react_3(initialState);
+    Object.keys(store.getActions()).forEach(name => {
+      actions[name] = arg => {
+        const res = store.getActions()[name].call(this, state, arg);
+        if (isPromise(res)) {
+          Promise.resolve(res).then(ret => {
+            setState(Object.assign(Object.assign({}, state), ret));
+          });
+        } else {
+          setState(Object.assign(Object.assign({}, state), res));
+        }
+      };
+    });
+    return { state, actions };
   }
   /**
    * Store Provider component
@@ -42576,41 +42639,56 @@
   }
 
   function Body() {
-    const [state, dispatch] = useStoreContext(getStore("test"));
-    console.log("state", state);
+    const { state, actions } = useStoreContext(getStore("test"));
+    console.log("state", state, actions);
     return react.createElement(
       "div",
       null,
-      react.createElement("p", null, "Body ", state.count),
+      react.createElement("h2", null, "Body"),
+      react.createElement(
+        "p",
+        null,
+        "count: ",
+        state.count,
+        ", name: ",
+        state.name
+      ),
       react.createElement(
         "button",
-        { onClick: dispatch.bind(this, { type: "increment" }) },
+        { onClick: () => actions.increment() },
         "increment"
       ),
       react.createElement(
         "button",
-        { onClick: dispatch.bind(this, { type: "decrement" }) },
+        { onClick: () => actions.decrement() },
         "decrement"
       )
     );
   }
 
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "increment":
-        return { count: state.count + 1 };
-      case "decrement":
+  const sleep = t =>
+    __awaiter(void 0, void 0, void 0, function*() {
+      return new Promise(resolve => setTimeout(resolve, t));
+    });
+  const actions = {
+    increment(state) {
+      return { count: state.count + 1 };
+    },
+    decrement(state) {
+      return __awaiter(this, void 0, void 0, function*() {
+        yield sleep(2000);
         return { count: state.count - 1 };
-      default:
-        return state;
+      });
     }
   };
   function App() {
-    const store = getStore("test", reducer);
-    const value = useStore(store, { count: 1 });
+    const testStore = getStore("test", actions);
+    const testValue = useStore(testStore, { count: 1, name: "my name" });
+    const userStore = getStore("user", actions);
+    const userValue = useStore(userStore, { nickName: "xiao ming", age: 22 });
     return react.createElement(
       Providers,
-      { stores: [store], values: [value] },
+      { stores: [testStore, userStore], values: [testValue, userValue] },
       react.createElement(
         "div",
         { className: "App" },

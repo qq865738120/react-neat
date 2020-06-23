@@ -14,6 +14,5 @@ switch (process.env.NODE_ENV) {
     config = devConfig;
     break;
 }
-console.log("config", config);
 
 export default config;

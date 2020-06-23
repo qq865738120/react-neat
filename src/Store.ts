@@ -1,4 +1,4 @@
-import { Reducer, Context } from "./type";
+import { Context } from "./type";
 
 /**
  * store empty class
@@ -7,11 +7,11 @@ import { Reducer, Context } from "./type";
  */
 class Store {
   private name: string;
-  private reducer: Reducer;
+  private actions: {};
   private context: Context;
-  constructor(name: string, reducer: Reducer, context: Context) {
+  constructor(name: string, actions: {}, context: Context) {
     this.name = name;
-    this.reducer = reducer;
+    this.actions = actions;
     this.context = context;
   }
 
@@ -24,12 +24,12 @@ class Store {
     return true;
   }
 
-  public getReducer(): Reducer {
-    return this.reducer;
+  public getActions(): {} {
+    return this.actions;
   }
 
-  public setReducer(reducer: Reducer): boolean {
-    this.reducer = reducer;
+  public setActions(actions: {}): boolean {
+    this.actions = actions;
     return true;
   }
 
