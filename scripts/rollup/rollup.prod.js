@@ -6,7 +6,7 @@ import { version } from "../../package.json";
 const VERSION = process.env.VERSION || version;
 
 const copyright =
-  new Date().getFullYear() > 2018 ? "2018-" + new Date().getFullYear() : 2018;
+  new Date().getFullYear() > 2019 ? "2019-" + new Date().getFullYear() : 2019;
 
 const banner =
   "/*!\n" +
