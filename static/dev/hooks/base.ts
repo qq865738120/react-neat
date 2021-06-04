@@ -8,15 +8,14 @@ export function useText(callback?) {
 
 export function useModal(callback?) {
   const [isShow, setIsShow] = useState(false);
-  const [point, setPoint, test, setTest] = this;
-  console.log("callback", callback);
-  console.log("point", point);
-  console.log("test", test);
+  const [test, setTest] = this;
+
   useEffect(() => {
     console.log("switch to", isShow);
   }, [isShow]);
 
   const setShow = () => {
+    console.log("11111", this);
     setIsShow(true);
   };
 
@@ -29,7 +28,7 @@ export function useModal(callback?) {
 
 export function useCount(callback?) {
   const [count, setCount] = useState(0);
-  const [point, setPoint, test, setTest] = this;
+  const [test, setTest] = this;
   // const [point, setPoint] = callback();
   useEffect(() => {
     console.log("count change", count);
@@ -37,7 +36,6 @@ export function useCount(callback?) {
 
   const add = () => {
     setCount(count + 1);
-    setPoint(count);
     setTest("test" + count);
   };
 
@@ -52,6 +50,6 @@ export function useHead() {
   // const [count, add, less] = useCount();
   // const [isShow, setShow, setHide] = useModal(false, count);
   useText();
-  const arr = useBox([useCount, useModal], [3, { test: "111" }], [[1], [2]]);
+  const arr = useBox([useCount, useModal], [3, false], [[1], [2]]);
   return arr;
 }
