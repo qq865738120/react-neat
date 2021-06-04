@@ -112,10 +112,7 @@ react-neat 是一个 React Hooks 工具库，同时它也是一个轻量级的�
     // 通过Providers组件将storeReducer注入到根组件中，同时你还需要将userStore注入。
     // 与Provider组件不同的是，Providers可以同时注入多个store。
     return (
-      <Providers
-        values={[userStoreReducer, bookStoreReducer]}
-        stores={[userStore, bookStore]}
-      >
+      <Providers values={[userStoreReducer, bookStoreReducer]} stores={[userStore,bookStore]}>
         <App></App>
       </Providers>
     );
