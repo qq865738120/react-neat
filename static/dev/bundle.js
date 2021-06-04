@@ -42381,6 +42381,7 @@
       value && Object.prototype.toString.call(value) === "[object Promise]"
     );
   }
+  //# sourceMappingURL=baseUtil.js.map
 
   const __createState = states => {
     /* eslint-disable react-hooks/rules-of-hooks */
@@ -42434,6 +42435,7 @@
     }
     return __useHooks(context, hooks, args);
   }
+  //# sourceMappingURL=useBox.js.map
 
   function useText(callback) {
     const text = react_3("text");
@@ -42441,14 +42443,11 @@
   }
   function useModal(callback) {
     const [isShow, setIsShow] = react_3(false);
-    const [point, setPoint, test, setTest] = this;
-    console.log("callback", callback);
-    console.log("point", point);
-    console.log("test", test);
     react_4(() => {
       console.log("switch to", isShow);
     }, [isShow]);
     const setShow = () => {
+      console.log("11111", this);
       setIsShow(true);
     };
     const setHide = () => {
@@ -42458,14 +42457,13 @@
   }
   function useCount(callback) {
     const [count, setCount] = react_3(0);
-    const [point, setPoint, test, setTest] = this;
+    const [test, setTest] = this;
     // const [point, setPoint] = callback();
     react_4(() => {
       console.log("count change", count);
     }, [count]);
     const add = () => {
       setCount(count + 1);
-      setPoint(count);
       setTest("test" + count);
     };
     const less = () => {
@@ -42477,7 +42475,7 @@
     // const [count, add, less] = useCount();
     // const [isShow, setShow, setHide] = useModal(false, count);
     useText();
-    const arr = useBox([useCount, useModal], [3, { test: "111" }], [[1], [2]]);
+    const arr = useBox([useCount, useModal], [3, false], [[1], [2]]);
     return arr;
   }
 
@@ -42502,6 +42500,7 @@
       react.createElement("button", { onClick: setHide }, "hide")
     );
   }
+  //# sourceMappingURL=Head.js.map
 
   /**
    * store empty class
@@ -42536,12 +42535,14 @@
       return true;
     }
   }
+  //# sourceMappingURL=store.js.map
 
   function ParamsException(message) {
     this.message = message;
     this.name = "params error";
     this.code = 1000;
   }
+  //# sourceMappingURL=exceptions.js.map
 
   const storeList = [];
   /**
@@ -42551,7 +42552,17 @@
    * @param storeName store name
    * @param actions If the store has never been obtained, please pass in the reducer parameter.
    */
-  const getStore = (storeName, actions) => {
+  /**
+   * Get the specified store.
+   * If the store does not exist, it will be created.
+   *
+   * @export
+   * @template T - The action type you defined.
+   * @param {string} storeName - The store name, you can find the corresponding store through `storeName`
+   * @param {T} [actions] - The action object can provide multiple actions, and each action corresponds to an operation.
+   * @returns {Store} - The Store object
+   */
+  function getStore(storeName, actions) {
     let storeObj = storeList.filter(item => item.getName() === storeName).pop();
     if (storeObj) {
       return storeObj;
@@ -42565,13 +42576,16 @@
     storeObj = new Store(storeName, actions, context);
     storeList.push(storeObj);
     return storeObj;
-  };
+  }
   /**
-   * Use the store hook
+   * Use the store hook.
    *
-   * @param store The store instance you want to use
-   * @param initialState Initial state
-   * @param initializer Lazy loading state initial value
+   * @export
+   * @template T
+   * @template U
+   * @param {Store} store - The store instance you want to use.
+   * @param {*} initialState - Initial state.
+   * @returns {StoreReducer<T, U>} - `StoreReducer` is an interface that provides `state` and `actions` to operate `state`.
    */
   function useStore(store, initialState) {
     // const value = useReducer(store.getActions(), initialState, initializer);
@@ -42594,10 +42608,14 @@
     return { state, actions };
   }
   /**
-   * Store Provider component
-   * This component will distribute the state in the store to its children
+   * Store Provider component.
+   * This component will distribute the state in the store to its children.
    *
-   * @param props component props
+   * @export
+   * @template T - The action type you defined.
+   * @template U - The state type you defined.
+   * @param {ProvidersProps<T, U>} props - React component props.
+   * @returns {React.FunctionComponentElement<React.ProviderProps<ProvidersProps<T, U>>>}
    */
   function Providers(props) {
     const { stores, values, children } = props;
@@ -42630,13 +42648,20 @@
     return queue.pop();
   }
   /**
-   * Use context to get the state provided in the store
+   * Use context to get the state provided in the store.
+   * `useContext` is the encapsulation method of `useStoreContext`.
+   * The provider must be injected into the global component before use.
    *
-   * @param store Pass in the store whose context you want to use
+   * @export
+   * @template T - The action type you defined.
+   * @template U - The state type you defined.
+   * @param {Store} store - Pass in the store whose context you want to use
+   * @returns {StoreReducer<T, U>} - `StoreReducer` is an interface that provides `state` and `actions` to operate `state`.
    */
   function useStoreContext(store) {
     return react_6(store.getContext());
   }
+  //# sourceMappingURL=useStore.js.map
 
   function Body() {
     const { state, actions } = useStoreContext(getStore("test"));
@@ -42665,6 +42690,7 @@
       )
     );
   }
+  //# sourceMappingURL=Body.js.map
 
   const sleep = t =>
     __awaiter(void 0, void 0, void 0, function*() {
@@ -42698,10 +42724,12 @@
       react.createElement("p", null, "1")
     );
   }
+  //# sourceMappingURL=App.js.map
 
   reactDom.render(
     react.createElement(App, null),
     document.getElementById("root")
   );
+  //# sourceMappingURL=Index.js.map
 })();
 //# sourceMappingURL=bundle.js.map
