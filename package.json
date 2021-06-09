@@ -1,8 +1,12 @@
 {
   "name": "react-neat",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A react hook tool library",
-  "repository": ":username/:repository",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qq865738120/react-neat.git"
+  },
+  "homepage": "https://github.com/qq865738120/react-neat",
   "main": "dist/umd/index.js",
   "module": "dist/es6/index.js",
   "keywords": [
@@ -13,14 +17,15 @@
   ],
   "files": [
     "dist",
-    "index.d.ts"
+    "index.d.ts",
+    "README.md"
   ],
   "scripts": {
     "test": "jest --no-cache",
     "build": "cross-env NODE_ENV=production rollup -c",
     "start": "cross-env NODE_ENV=development rollup -c -w"
   },
-  "author": "code_xia",
+  "author": "code_xia zwj865738120@163.com",
   "license": "MIT",
   "peerDependencies": {
     "react": "^16.8.0"
